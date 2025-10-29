@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="main">
+        <div class="header">
+            <h1>GREENBASKET</h1>
+          <div class="nav-links">
+            <a href="/chome/">Home</a>
+            <a href="/cveg/">Vegetables</a>
+            <a href="/cfruit/">Fruits</a>
+            <a href="/cprofile/">Profile</a>
+            <a href="/viewcart/">My Cart</a>
+            <a  href="/c_orderlist/">My Orders</a>
+            <a href="/">Logout</a>
+            </div>
+        </div>
+        <div class="cvegadgres"></div>
+            <div class="div2">
+                <h3>Payment</h3>
+                <hr>
+                <div class="p">
+                {% if amount == 0 %}
+                    <form method="POST" action="/c_orders/{{ amount }}/{{point}}/">
+                      {% csrf_token %}
+                      <h4>Total Amount to be Paid: Rs. {{ amount }} INR</h4><br>
+                      <p>Reward Points : {{point}} <a class="btn btn-info" href="/point/{{amount}}/{{point}}/"> Use</a></p>
+                      <br>
+                      <button type="submit" class="btn btn-success">Proceed</button>
+                  </form>
+                {% else %}
+                  <form method="POST" action="/c_orders/{{ amount }}/{{point}}/">
+                      {% csrf_token %}
+                      <h4>Total Amount to be Paid: Rs. {{ amount }} INR</h4><br>
+                      <p>Reward Points : {{point}} <a class="btn btn-info" href="/point/{{amount}}/{{point}}/"> Use</a></p>
+                      <label for="payment_method"><strong>Select Payment Method:</strong></label><br>
+                      <select id="payment_method" name="payment_method" class="form-control" required>
+                        <option value="">-- Choose an option --</option>
+                        <option value="Online">Online Payment</option>
+                        <option value="COD">Cash on Delivery</option>
+                      </select>
+                      <br>
+
+                      <!-- Hidden online payment section -->
+                      <div id="online_payment_section" style="display:none; margin-top:15px;">
+                      <h5>Enter Payment Details</h5>
+
+                      <label><strong>Choose Method:</strong></label><br>
+                      <select id="online_type" name="online_type" class="form-control" style="width:200px;">
+                          <option value="">-- Select Type --</option>
+                          <option value="card">Credit/Debit Card</option>
+                          <option value="upi">UPI</option>
+                          <option value="netbanking">Net Banking</option>
+                      </select><br>
+
+                      <!-- Card details -->
+                      <div id="card_details" style="display:none;">
+                          <input type="text" name="card_number" class="form-control mb-2" placeholder="Card Number" maxlength="16">
+                          <input type="text" name="card_name" class="form-control mb-2" placeholder="Cardholder Name">
+                          <div style="display:flex; gap:10px;">
+                          <input type="text" name="expiry" class="form-control" placeholder="MM/YY" style="width:100px;">
+                          <input type="text" name="cvv" class="form-control" placeholder="CVV" style="width:100px;">
+                          </div>
+                      </div>
+
+                      <!-- UPI details -->
+                      <div id="upi_details" style="display:none;">
+                          <input type="text" name="upi_id" class="form-control mb-2" placeholder="Enter your UPI ID (e.g. name@upi)">
+                      </div>
+
+                      <!-- Net banking details -->
+                      <div id="netbanking_details" style="display:none;">
+                          <select name="bank" class="form-control mb-2">
+                          <option value="">Select your bank</option>
+                          <option value="SBI">State Bank of India</option>
+                          <option value="HDFC">HDFC Bank</option>
+                          <option value="ICICI">ICICI Bank</option>
+                          <option value="AXIS">Axis Bank</option>
+                          </select>
+                      </div>
+                      </div>
+                      <br>
+                      <button type="submit" class="btn btn-success">Proceed to Pay</button>
+                  </form>
+                {% endif %}
+                </div>
+
+
+
+            </div>
+    </div> 
+</body>
+</html>
+
+
+<script>
+  // Toggle the online payment section
+  document.getElementById('payment_method').addEventListener('change', function() {
+    const onlineSection = document.getElementById('online_payment_section');
+    if (this.value === 'online') {
+      onlineSection.style.display = 'block';
+    } else {
+      onlineSection.style.display = 'none';
+    }
+  });
+
+  // Toggle between card/upi/netbanking
+  document.getElementById('online_type').addEventListener('change', function() {
+    document.getElementById('card_details').style.display = this.value === 'card' ? 'block' : 'none';
+    document.getElementById('upi_details').style.display = this.value === 'upi' ? 'block' : 'none';
+    document.getElementById('netbanking_details').style.display = this.value === 'netbanking' ? 'block' : 'none';
+  });
+</script>
